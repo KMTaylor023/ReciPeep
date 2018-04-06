@@ -18,11 +18,31 @@ const RecipeSchema = new mongoose.Schema({
     trim: true,
     maxlength: MAX_RECIPE_DESC_LENGTH,
   },
-  ingredients: [
-    
-  ],
+  ingredients: {
+    type: [String],
+    required: true,
+    validate: {
+      validator: (items) => {
+        for(let i = 0; i < items.length; i++){
+          if(items[i].length > MAX_RECIPE_NAME_LENGTH) return false;
+        }
+        return true;
+      },
+      message: `Ingredient names can only be ${MAX_RECIPE_NAME_LENGTH} characters long`,
+    },
+  },
   steps: {
-    
+    type: [string],
+    required: true,
+    validate: {
+      validator: (steps) => {
+        for(let i = 0; i < steps.length; i++){
+          if(steps[i].length > MAX_RECIPE_DESC_LENGTH) return false;
+        }
+        return true;
+      },
+      message: `Steps can only be ${MAX_RECIPE_DESC_LENGTH} characters long`,
+    },
   },
   createdDate: {
     type: Date,

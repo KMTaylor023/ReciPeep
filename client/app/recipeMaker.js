@@ -40,12 +40,12 @@ const RecipeForm = (props) => {
       <input id="recipeDescField" type="text" name="desc" maxlength={props.maxDesc} placeholder="Recipe Description"/>
       <fieldset id="ingredientsFieldset">
         <legend>Ingredients</legend>
-        <input class="ingredientField" type="text" name="ingredient-0" maxlength={props.maxName} placehoder="ingredient"/>
+        <input class="ingredientField" type="text" name="ingredient" maxlength={props.maxName} placehoder="ingredient"/>
         <input type="button" id="addIngredientField" class="addFieldButton" count="1" onClick={} value="Add Ingredient"/>
       </fieldset>
       <fieldset id="stepFieldset">
         <legend>Steps</legend>
-        <input class="stepField" type="text" name="step-0" maxlength={props.maxDesc} placehoder="ingredient"/>
+        <input class="stepField" type="text" name="step" maxlength={props.maxDesc} placehoder="ingredient"/>
         <input type="button" id="addStepField" class="addFieldButton" count="1" onClick={} value="Add Step"/>
       </fieldset>
       <input type="hidden" id="csrf" name="_csrf" value={props.csrf}/>
