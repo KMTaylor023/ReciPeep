@@ -3,29 +3,63 @@ const handleRecipe = (e) => {
   
   //$("#errorMessage").animate({width:'hide'}, 350);
   
-  if($("#recipeNameField").val() == '' || $("#domoAge").val() == '') {
+  if($("#recipeNameField").val() == '' || $("#recipeDescField").val() == '') {
     handleError("RAWR! All fields are required");
     return false;
   }
-  sendAjax('POST', $("#domoForm").attr('action'), $("#domoForm").serialize(), function() {
-    loadDomosFromServer();
+  
+  let good = false;
+  $(".ingredientField").each( () => {
+    if(this.val() !== '') good=true;
+  });
+  
+  //TODO validate step fields
+  
+  if(!good){
+    handleError("RAWR! All fields are required");
+    return false;
+  }
+  sendAjax('POST', $("#recipeForm").attr('action'), $("#recipeForm").serialize(), function() {
+    loadRecipesFromServer();
   });
   return false;
 };
 
+const setSelectedRecipe = (e) => {
+  e.preventDefault();
+  let div = e.target;
+  
+  while (div.nodeName !== 'DIV'){
+    div = div.parentElement;
+  }
+  const recipeDiv = $(div);
+  
+  if(recipeDiv.hasClass('selectedRecipe')){
+    recipeDiv.removeClass('selectedRecipe');
+    recipeDiv.addClass('unselectedRecipe');
+    return false;
+  }
+  
+  const recipe = $(".selectedRecipe");
+  recipe.removeClass('selectedRecipe');
+  recipe.addClass('unselectedRecipe');
+  
+  recipeDiv.removeClass('unselectedRecipe');
+  recipeDiv.addClass('selectedRecipe');
+  
+  return false;
+}
 
-const addFieldOnClick = (e) => {
+const addFieldOnClick = (e,max) => {
   let count = +e.target.getAttribute('count');
   if(e.target.id === "addStepField"){
-    
+    e.target.before(`<input class="ingredientField" type="text" name="ingredients" maxlength="${max}" placeholder="ingredient"/>`);
   } else {
-    
+    e.target.before(`<input class="stepField" type="text" name="steps" maxlength="${max}" placeholder="ingredient"/>`);
   }
 };
 
 const RecipeForm = (props) => {
-  
-  
   return (
     <form id="recipeForm"
           onSubmit={handleRecipe}
@@ -40,13 +74,13 @@ const RecipeForm = (props) => {
       <input id="recipeDescField" type="text" name="desc" maxlength={props.maxDesc} placeholder="Recipe Description"/>
       <fieldset id="ingredientsFieldset">
         <legend>Ingredients</legend>
-        <input class="ingredientField" type="text" name="ingredient" maxlength={props.maxName} placehoder="ingredient"/>
-        <input type="button" id="addIngredientField" class="addFieldButton" count="1" onClick={} value="Add Ingredient"/>
+        <input className="ingredientField" type="text" name="ingredients" maxlength={props.maxName} placeholder="ingredient"/>
+        <input type="button" id="addIngredientField" class="addFieldButton" count="1" onClick={(e) => addFieldOnClick(e,props.maxName)} value="Add Ingredient"/>
       </fieldset>
       <fieldset id="stepFieldset">
         <legend>Steps</legend>
-        <input class="stepField" type="text" name="step" maxlength={props.maxDesc} placehoder="ingredient"/>
-        <input type="button" id="addStepField" class="addFieldButton" count="1" onClick={} value="Add Step"/>
+        <input className="stepField" type="text" name="steps" maxlength={props.maxDesc} placeholder="ingredient"/>
+        <input type="button" id="addStepField" class="addFieldButton" count="1" onClick={(e) => addFieldOnClick(e,props.maxDesc)} value="Add Step"/>
       </fieldset>
       <input type="hidden" id="csrf" name="_csrf" value={props.csrf}/>
       <input className="makeRecipeSubmit" type="submit" value="Make Recipe"/>
@@ -65,10 +99,28 @@ const RecipeList = function(props) {
   }
   
   const recipeNodes = props.recipes.map(function(recipe) {
+    const ingredientNodes = recipe.ingredients.map(function(ingredient) {
+      return (
+        <li className="ingredient">{ingredient}</li>
+      );
+    });
+    
+    const stepNodes = recipe.steps.map(function(step) {
+      return (
+        <li className="steps">{step}</li>
+      );
+    });
+    
     return (
-      <div key={recipe._id} className="recipe" onClick={() => recipeClick(e,recipe._id)}>
+      <div key={recipe._id} className="recipe" onClick={setSelectedRecipe}>
         <h3 className="recipeName">{recipe.name}</h3>
         <h3 className="recipeDesc">{recipe.desc}</h3>
+        <ul id="ingredients">
+            {ingredientNodes}
+        </ul>
+        <ol id="steps">
+            {stepNodes}
+        </ol>
       </div>
     );
   });

@@ -14,35 +14,43 @@ const recipeMakerPage = (req, res) => {
 };
 
 const makeRecipe = (req, res) => {
-  if (!req.body.name || !req.body.age || !req.body.nature) {
+  if (!req.body.name || !req.body.desc || !req.body.steps || !req.body.ingredients) {
     return res.status(400).json({ error: 'GRR! name and age required' });
   }
-
-  const domoData = {
+  
+  let ingredients = req.body.ingredients;
+  
+  if(!Array.isArray(ingredients)) ingredients = [ingredients];
+  
+  let steps = req.body.steps
+  
+  if(!Array.isArray(steps)) steps = [steps];
+  
+  const recipeData = {
     name: req.body.name,
-    age: req.body.age,
-    nature: natureCheck,
-    owner: req.session.account._id,
-  };
+    description: req.body.desc,
+    ingredients: ingredients,
+    steps: steps,
+  }
 
-  const newDomo = new Domo.DomoModel(domoData);
+  const newRecipe = new Recipe.RecipeModel(recipeData);
 
-  const domoPromise = newDomo.save();
+  const recipePromise = newRecipe.save();
 
-  domoPromise.then(() => {
-    res.json({ redirect: '/maker' });
+  recipePromise.then(() => {
+    res.json({ redirect: '/recipeMaker' });
   });
 
-  domoPromise.catch((err) => {
+  recipePromise.catch((err) => {
     console.log(err);
     if (err.code === 11000) {
-      return res.status(400).json({ error: 'Domo already exists.' });
+      return res.status(400).json({ error: 'Recipe already exists.' });
     }
 
     return res.status(400).json({ error: 'An error occured' });
   });
 
-  return domoPromise;
+  return recipePromise;
 };
 
 const getRecipes = (request, response) => {
