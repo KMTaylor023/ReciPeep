@@ -23,8 +23,8 @@ const RecipeSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (items) => {
-        for(let i = 0; i < items.length; i++){
-          if(items[i].length > MAX_RECIPE_NAME_LENGTH) return false;
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].length > MAX_RECIPE_NAME_LENGTH) return false;
         }
         return true;
       },
@@ -36,21 +36,21 @@ const RecipeSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (steps) => {
-        for(let i = 0; i < steps.length; i++){
-          if(steps[i].length > MAX_RECIPE_DESC_LENGTH) return false;
+        for (let i = 0; i < steps.length; i++) {
+          if (steps[i].length > MAX_RECIPE_DESC_LENGTH) return false;
         }
         return true;
       },
       message: `Steps can only be ${MAX_RECIPE_DESC_LENGTH} characters long`,
     },
   },
-  
+
   owner: {
     type: mongoose.Schema.ObjectId,
     required: true,
     ref: 'Account',
   },
-  
+
   createdDate: {
     type: Date,
     default: Date.now,

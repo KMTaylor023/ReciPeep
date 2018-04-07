@@ -17,22 +17,22 @@ const makeRecipe = (req, res) => {
   if (!req.body.name || !req.body.desc || !req.body.steps || !req.body.ingredients) {
     return res.status(400).json({ error: 'GRR! name and age required' });
   }
-  
+
   let ingredients = req.body.ingredients;
-  
-  if(!Array.isArray(ingredients)) ingredients = [ingredients];
-  
-  let steps = req.body.steps
-  
-  if(!Array.isArray(steps)) steps = [steps];
-  
+
+  if (!Array.isArray(ingredients)) ingredients = [ingredients];
+
+  let steps = req.body.steps;
+
+  if (!Array.isArray(steps)) steps = [steps];
+
   const recipeData = {
     name: req.body.name,
     description: req.body.desc,
-    ingredients: ingredients,
-    steps: steps,
+    ingredients,
+    steps,
     owner: req.session.account._id,
-  }
+  };
 
   const newRecipe = new Recipe.RecipeModel(recipeData);
 
@@ -70,4 +70,4 @@ const getRecipes = (request, response) => {
 module.exports.recipeMakerPage = recipeMakerPage;
 module.exports.makeRecipe = makeRecipe;
 module.exports.getRecipes = getRecipes;
-//module.exports.updateRecipe = updateRecipe;
+// module.exports.updateRecipe = updateRecipe;

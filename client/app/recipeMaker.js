@@ -11,7 +11,7 @@ const handleRecipe = (e) => {
   //TODO validate step fields
   
   sendAjax('POST', $("#recipeForm").attr('action'), $("#recipeForm").serialize(), function() {
-    loadRecipesFromServer(true);
+    loadRecipesFromServer();
   });
   return false;
 };
@@ -125,20 +125,11 @@ const RecipeList = function(props) {
   );
 };
 
-const loadRecipesFromServer = (reload) => {
+const loadRecipesFromServer = () => {
   sendAjax('GET', '/getRecipes', null, (data) => {
     ReactDOM.render(
       <RecipeList recipes={data.recipes}/>,document.querySelector("#recipes")
     );
-    
-    if(reload) {
-      ReactDOM.render(
-        <p></p>, document.querySelector("#makeRecipe")
-      );
-      ReactDOM.render(
-        <RecipeForm csrf={csrf} />, document.querySelector("#makeRecipe")
-      );
-    }
   });
 };
 
@@ -150,7 +141,7 @@ const setup = function(csrf) {
     <RecipeList recipes={[]} />, document.querySelector("#recipes")
   );
   
-  loadRecipesFromServer(false);
+  loadRecipesFromServer();
 };
 
 const getToken = () => {

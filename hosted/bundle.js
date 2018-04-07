@@ -13,7 +13,7 @@ var handleRecipe = function handleRecipe(e) {
   //TODO validate step fields
 
   sendAjax('POST', $("#recipeForm").attr('action'), $("#recipeForm").serialize(), function () {
-    loadRecipesFromServer(true);
+    loadRecipesFromServer();
   });
   return false;
 };
@@ -170,14 +170,9 @@ var RecipeList = function RecipeList(props) {
   );
 };
 
-var loadRecipesFromServer = function loadRecipesFromServer(reload) {
+var loadRecipesFromServer = function loadRecipesFromServer() {
   sendAjax('GET', '/getRecipes', null, function (data) {
     ReactDOM.render(React.createElement(RecipeList, { recipes: data.recipes }), document.querySelector("#recipes"));
-
-    if (reload) {
-      ReactDOM.render(React.createElement("p", null), document.querySelector("#makeRecipe"));
-      ReactDOM.render(React.createElement(RecipeForm, { csrf: csrf }), document.querySelector("#makeRecipe"));
-    }
   });
 };
 
@@ -185,7 +180,7 @@ var setup = function setup(csrf) {
   ReactDOM.render(React.createElement(RecipeForm, { csrf: csrf }), document.querySelector("#makeRecipe"));
   ReactDOM.render(React.createElement(RecipeList, { recipes: [] }), document.querySelector("#recipes"));
 
-  loadRecipesFromServer(false);
+  loadRecipesFromServer();
 };
 
 var getToken = function getToken() {
