@@ -32,7 +32,7 @@ const RecipeSchema = new mongoose.Schema({
     },
   },
   steps: {
-    type: [string],
+    type: [String],
     required: true,
     validate: {
       validator: (steps) => {
@@ -44,11 +44,20 @@ const RecipeSchema = new mongoose.Schema({
       message: `Steps can only be ${MAX_RECIPE_DESC_LENGTH} characters long`,
     },
   },
+  
+  owner: {
+    type: mongoose.Schema.ObjectId,
+    required: true,
+    ref: 'Account',
+  },
+  
   createdDate: {
     type: Date,
     default: Date.now,
   },
 });
+
+const convertId = mongoose.Types.ObjectId;
 
 RecipeSchema.statics.toAPI = (doc) => ({
   name: doc.name,

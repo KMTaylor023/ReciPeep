@@ -31,6 +31,7 @@ const makeRecipe = (req, res) => {
     description: req.body.desc,
     ingredients: ingredients,
     steps: steps,
+    owner: req.session.account._id,
   }
 
   const newRecipe = new Recipe.RecipeModel(recipeData);

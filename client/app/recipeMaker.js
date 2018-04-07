@@ -1,6 +1,6 @@
 const handleRecipe = (e) => {
   e.preventDefault();
-  
+   
   //$("#errorMessage").animate({width:'hide'}, 350);
   
   if($("#recipeNameField").val() == '' || $("#recipeDescField").val() == '') {
@@ -8,19 +8,10 @@ const handleRecipe = (e) => {
     return false;
   }
   
-  let good = false;
-  $(".ingredientField").each( () => {
-    if(this.val() !== '') good=true;
-  });
-  
   //TODO validate step fields
   
-  if(!good){
-    handleError("RAWR! All fields are required");
-    return false;
-  }
   sendAjax('POST', $("#recipeForm").attr('action'), $("#recipeForm").serialize(), function() {
-    loadRecipesFromServer();
+    loadRecipesFromServer(true);
   });
   return false;
 };
@@ -48,14 +39,16 @@ const setSelectedRecipe = (e) => {
   recipeDiv.addClass('selectedRecipe');
   
   return false;
-}
+};
 
 const addFieldOnClick = (e,max) => {
   let count = +e.target.getAttribute('count');
   if(e.target.id === "addStepField"){
-    e.target.before(`<input class="ingredientField" type="text" name="ingredients" maxlength="${max}" placeholder="ingredient"/>`);
+    let newInput = $('<input class="ingredientField" type="text" name="ingredients" maxlength="' + max + '" placeholder="ingredient"></input>');
+    $(e.target).before(newInput);
   } else {
-    e.target.before(`<input class="stepField" type="text" name="steps" maxlength="${max}" placeholder="ingredient"/>`);
+    let newInput = $('<input class="stepField" type="text" name="steps" maxlength="' + max + '" placeholder="ingredient"/>');
+    $(e.target).before(newInput);
   }
 };
 
@@ -114,7 +107,7 @@ const RecipeList = function(props) {
     return (
       <div key={recipe._id} className="recipe" onClick={setSelectedRecipe}>
         <h3 className="recipeName">{recipe.name}</h3>
-        <h3 className="recipeDesc">{recipe.desc}</h3>
+        <h3 className="recipeDesc">{recipe.description}</h3>
         <ul id="ingredients">
             {ingredientNodes}
         </ul>
@@ -132,11 +125,20 @@ const RecipeList = function(props) {
   );
 };
 
-const loadRecipesFromServer = () => {
+const loadRecipesFromServer = (reload) => {
   sendAjax('GET', '/getRecipes', null, (data) => {
     ReactDOM.render(
       <RecipeList recipes={data.recipes}/>,document.querySelector("#recipes")
     );
+    
+    if(reload) {
+      ReactDOM.render(
+        <p></p>, document.querySelector("#makeRecipe")
+      );
+      ReactDOM.render(
+        <RecipeForm csrf={csrf} />, document.querySelector("#makeRecipe")
+      );
+    }
   });
 };
 
@@ -148,7 +150,7 @@ const setup = function(csrf) {
     <RecipeList recipes={[]} />, document.querySelector("#recipes")
   );
   
-  loadRecipesFromServer();
+  loadRecipesFromServer(false);
 };
 
 const getToken = () => {

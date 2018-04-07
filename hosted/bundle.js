@@ -1,209 +1,191 @@
-'use strict';
+"use strict";
 
-var natures = ['Lonely', 'Brave', 'Adamant', 'Naughty', 'Bold', 'Docile', 'Relaxed', 'Impish', 'Lax', 'Timid', 'Hasty', 'Serious', 'Jolly', 'Naive', 'Modest', 'Mild', 'Quiet', 'Bashful', 'Rash', 'Calm', 'Gentle', 'Sassy', 'Careful', 'Quirky'];
-
-var selected = [];
-
-var selectDomo = function selectDomo(domo) {
-  domo.classList.add('selected');
-  selected.push(domo);
-};
-
-var deselectDomo = function deselectDomo(which) {
-  var domo = void 0;
-  if (which) domo = selected.pop();else domo = selected.shift();
-  domo.classList.remove('selected');
-};
-
-var domoClick = function domoClick(e) {
-  var sel = e.target;
-
-  while (sel.nodeName !== "DIV") {
-    sel = sel.parentElement;
-  }
-  console.log(sel);
-  e.preventDefault();
-  for (var i = 0; i < selected.length; i++) {
-    if ($(sel).is($(selected[i]))) {
-      deselectDomo(i);
-      return false;
-    }
-  }
-
-  if (selected.length >= 2) {
-    deselectDomo(0);
-  }
-
-  selectDomo(sel);
-
-  return false;
-};
-
-var handleDomo = function handleDomo(e) {
+var handleRecipe = function handleRecipe(e) {
   e.preventDefault();
 
-  $("#domoMesssage").animate({ width: 'hide' }, 350);
+  //$("#errorMessage").animate({width:'hide'}, 350);
 
-  if ($("#domoName").val() == '' || $("#domoAge").val() == '') {
+  if ($("#recipeNameField").val() == '' || $("#recipeDescField").val() == '') {
     handleError("RAWR! All fields are required");
     return false;
   }
-  sendAjax('POST', $("#domoForm").attr('action'), $("#domoForm").serialize(), function () {
-    loadDomosFromServer();
+
+  //TODO validate step fields
+
+  sendAjax('POST', $("#recipeForm").attr('action'), $("#recipeForm").serialize(), function () {
+    loadRecipesFromServer(true);
   });
   return false;
 };
 
-var handleBabyDomo = function handleBabyDomo(e) {
+var setSelectedRecipe = function setSelectedRecipe(e) {
   e.preventDefault();
-  if (selected.length !== 2) {
-    handleError("RAWR! Two parents make a baby");
+  var div = e.target;
+
+  while (div.nodeName !== 'DIV') {
+    div = div.parentElement;
+  }
+  var recipeDiv = $(div);
+
+  if (recipeDiv.hasClass('selectedRecipe')) {
+    recipeDiv.removeClass('selectedRecipe');
+    recipeDiv.addClass('unselectedRecipe');
     return false;
   }
 
-  var name1 = ReactDOM.findDOMNode(selected[0].querySelector('.domoName')).innerText.substring(6);
-  var name2 = ReactDOM.findDOMNode(selected[1].querySelector('.domoName')).innerText.substring(6);
+  var recipe = $(".selectedRecipe");
+  recipe.removeClass('selectedRecipe');
+  recipe.addClass('unselectedRecipe');
 
-  var newName = name1.substring(0, Math.ceil(name1.length / 2)) + name2.substring(name2.length / 2);
+  recipeDiv.removeClass('unselectedRecipe');
+  recipeDiv.addClass('selectedRecipe');
 
-  $("#babyName").attr('value', newName);
-  $("#babyAge").attr('value', 0);
-  $("#babyNature").attr('value', natures[Math.floor(Math.random() * natures.length)]);
-
-  sendAjax('POST', $("#babyDomoForm").attr('action'), $("#babyDomoForm").serialize(), function () {
-    loadDomosFromServer();
-  });
-  deselectDomo(0);
-  deselectDomo(0);
+  return false;
 };
 
-var BabyDomoForm = function BabyDomoForm(props) {
+var addFieldOnClick = function addFieldOnClick(e, max) {
+  var count = +e.target.getAttribute('count');
+  if (e.target.id === "addStepField") {
+    var newInput = $('<input class="ingredientField" type="text" name="ingredients" maxlength="' + max + '" placeholder="ingredient"></input>');
+    $(e.target).before(newInput);
+  } else {
+    var _newInput = $('<input class="stepField" type="text" name="steps" maxlength="' + max + '" placeholder="ingredient"/>');
+    $(e.target).before(_newInput);
+  }
+};
+
+var RecipeForm = function RecipeForm(props) {
   return React.createElement(
-    'form',
-    { id: 'babyDomoForm',
-      onSubmit: handleBabyDomo,
-      name: 'babyForm',
-      action: '/maker',
-      method: 'POST',
-      className: 'babyDomoForm'
+    "form",
+    { id: "recipeForm",
+      onSubmit: handleRecipe,
+      name: "recipeForm",
+      action: "/recipeMaker",
+      method: "POST",
+      className: "recipeForm"
     },
     React.createElement(
-      'label',
-      null,
-      'Select two domos and make a baby!'
+      "label",
+      { htmlFor: "name" },
+      "Name: "
     ),
-    React.createElement('input', { id: 'babyName', type: 'hidden', name: 'name', value: '' }),
-    React.createElement('input', { id: 'babyAge', type: 'hidden', name: 'age', value: '' }),
-    React.createElement('input', { id: 'babyNature', type: 'hidden', name: 'nature', value: '' }),
-    React.createElement('input', { type: 'hidden', id: 'csrf', name: '_csrf', value: props.csrf }),
-    React.createElement('input', { className: 'makeDomoSubmit', type: 'submit', value: 'Make Baby' })
-  );
-};
-
-var DomoForm = function DomoForm(props) {
-
-  var natureOptions = props.natures.map(function (nature) {
-    return React.createElement(
-      'option',
-      { value: nature },
-      nature
-    );
-  });
-
-  return React.createElement(
-    'form',
-    { id: 'domoForm',
-      onSubmit: handleDomo,
-      name: 'domoForm',
-      action: '/maker',
-      method: 'POST',
-      className: 'domoForm'
-    },
+    React.createElement("input", { id: "recipeNameField", type: "text", name: "name", maxlength: props.maxName, placeholder: "Recipe Name" }),
     React.createElement(
-      'label',
-      { htmlFor: 'name' },
-      'Name: '
+      "label",
+      { htmlFor: "desc" },
+      "Description: "
     ),
-    React.createElement('input', { id: 'domoName', type: 'text', name: 'name', placeholder: 'Domo Name' }),
+    React.createElement("input", { id: "recipeDescField", type: "text", name: "desc", maxlength: props.maxDesc, placeholder: "Recipe Description" }),
     React.createElement(
-      'label',
-      { htmlFor: 'age' },
-      'Age: '
-    ),
-    React.createElement('input', { id: 'domoAge', type: 'text', name: 'age', placeholder: 'Domo Age' }),
-    React.createElement(
-      'label',
-      { htmlFor: 'nature' },
-      'Nature: '
-    ),
-    React.createElement(
-      'select',
-      { id: 'nature', name: 'nature' },
-      natureOptions
-    ),
-    React.createElement('input', { type: 'hidden', id: 'csrf', name: '_csrf', value: props.csrf }),
-    React.createElement('input', { className: 'makeDomoSubmit', type: 'submit', value: 'Make Domo' })
-  );
-};
-
-var DomoList = function DomoList(props) {
-  if (props.domos.length === 0) {
-    return React.createElement(
-      'div',
-      { className: 'domoList' },
+      "fieldset",
+      { id: "ingredientsFieldset" },
       React.createElement(
-        'h3',
-        { className: 'emptyDomo' },
-        'No Domos Yet'
+        "legend",
+        null,
+        "Ingredients"
+      ),
+      React.createElement("input", { className: "ingredientField", type: "text", name: "ingredients", maxlength: props.maxName, placeholder: "ingredient" }),
+      React.createElement("input", { type: "button", id: "addIngredientField", "class": "addFieldButton", count: "1", onClick: function onClick(e) {
+          return addFieldOnClick(e, props.maxName);
+        }, value: "Add Ingredient" })
+    ),
+    React.createElement(
+      "fieldset",
+      { id: "stepFieldset" },
+      React.createElement(
+        "legend",
+        null,
+        "Steps"
+      ),
+      React.createElement("input", { className: "stepField", type: "text", name: "steps", maxlength: props.maxDesc, placeholder: "ingredient" }),
+      React.createElement("input", { type: "button", id: "addStepField", "class": "addFieldButton", count: "1", onClick: function onClick(e) {
+          return addFieldOnClick(e, props.maxDesc);
+        }, value: "Add Step" })
+    ),
+    React.createElement("input", { type: "hidden", id: "csrf", name: "_csrf", value: props.csrf }),
+    React.createElement("input", { className: "makeRecipeSubmit", type: "submit", value: "Make Recipe" })
+  );
+};
+
+var RecipeList = function RecipeList(props) {
+  if (props.recipes.length === 0) {
+    return React.createElement(
+      "div",
+      { className: "recipeList" },
+      React.createElement(
+        "h3",
+        { className: "emptyRecipe" },
+        "No Recipes Yet"
       )
     );
   }
 
-  var domoNodes = props.domos.map(function (domo) {
+  var recipeNodes = props.recipes.map(function (recipe) {
+    var ingredientNodes = recipe.ingredients.map(function (ingredient) {
+      return React.createElement(
+        "li",
+        { className: "ingredient" },
+        ingredient
+      );
+    });
+
+    var stepNodes = recipe.steps.map(function (step) {
+      return React.createElement(
+        "li",
+        { className: "steps" },
+        step
+      );
+    });
+
     return React.createElement(
-      'div',
-      { key: domo._id, className: 'domo', onClick: domoClick },
-      React.createElement('img', { src: '/assets/img/domoface.jpeg', alt: 'domo face', className: 'domoFace' }),
+      "div",
+      { key: recipe._id, className: "recipe", onClick: setSelectedRecipe },
       React.createElement(
-        'h3',
-        { className: 'domoName' },
-        'Name: ',
-        domo.name
+        "h3",
+        { className: "recipeName" },
+        recipe.name
       ),
       React.createElement(
-        'h3',
-        { className: 'domoAge' },
-        'Age: ',
-        domo.age
+        "h3",
+        { className: "recipeDesc" },
+        recipe.description
       ),
       React.createElement(
-        'h3',
-        { className: 'domoNature' },
-        'Nature: ',
-        props.natures[domo.nature]
+        "ul",
+        { id: "ingredients" },
+        ingredientNodes
+      ),
+      React.createElement(
+        "ol",
+        { id: "steps" },
+        stepNodes
       )
     );
   });
 
   return React.createElement(
-    'div',
-    { className: 'domoList' },
-    domoNodes
+    "div",
+    { className: "recipeList" },
+    recipeNodes
   );
 };
 
-var loadDomosFromServer = function loadDomosFromServer() {
-  sendAjax('GET', '/getDomos', null, function (data) {
-    ReactDOM.render(React.createElement(DomoList, { domos: data.domos, natures: natures }), document.querySelector("#domos"));
+var loadRecipesFromServer = function loadRecipesFromServer(reload) {
+  sendAjax('GET', '/getRecipes', null, function (data) {
+    ReactDOM.render(React.createElement(RecipeList, { recipes: data.recipes }), document.querySelector("#recipes"));
+
+    if (reload) {
+      ReactDOM.render(React.createElement("p", null), document.querySelector("#makeRecipe"));
+      ReactDOM.render(React.createElement(RecipeForm, { csrf: csrf }), document.querySelector("#makeRecipe"));
+    }
   });
 };
 
 var setup = function setup(csrf) {
-  ReactDOM.render(React.createElement(DomoForm, { csrf: csrf, natures: natures }), document.querySelector("#makeDomo"));
-  ReactDOM.render(React.createElement(BabyDomoForm, { csrf: csrf }), document.querySelector("#makeBaby"));
-  ReactDOM.render(React.createElement(DomoList, { domos: [], natures: natures }), document.querySelector("#domos"));
+  ReactDOM.render(React.createElement(RecipeForm, { csrf: csrf }), document.querySelector("#makeRecipe"));
+  ReactDOM.render(React.createElement(RecipeList, { recipes: [] }), document.querySelector("#recipes"));
 
-  loadDomosFromServer();
+  loadRecipesFromServer(false);
 };
 
 var getToken = function getToken() {
@@ -215,15 +197,14 @@ var getToken = function getToken() {
 $(document).ready(function () {
   getToken();
 });
-"use strict";
+'use strict';
 
 var handleError = function handleError(message) {
-  $("#errorMessage").text(message);
-  $("#domoMessage").animate({ width: 'toggle' }, 350);
+  // $("#errorMessage").text(message);
+  alert(message);
 };
 
 var redirect = function redirect(response) {
-  $("#domoMessage").animate({ width: 'hide' }, 350);
   window.location = response.redirect;
 };
 
