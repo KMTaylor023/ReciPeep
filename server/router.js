@@ -10,6 +10,7 @@ const router = (app) => {
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
   app.get('/recipeMaker', mid.requiresLogin, controllers.Recipe.recipeMakerPage);
   app.post('/recipeMaker', mid.requiresLogin, controllers.Recipe.makeRecipe);
+  app.get('/public', mid.requiresLogin, controllers.Recipe.publicRecipesPage);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
 

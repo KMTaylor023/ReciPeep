@@ -13,6 +13,17 @@ const recipeMakerPage = (req, res) => {
   });
 };
 
+const publiRecipesPage = (req, res) => {
+   Recipe.RecipeModel.findByPublic(req.session.account._id, (err, docs) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'An error occured' });
+    }
+
+    return res.render('public', { recipes: docs });
+  });
+};
+
 const makeRecipe = (req, res) => {
   if (!req.body.name || !req.body.desc || !req.body.steps || !req.body.ingredients) {
     return res.status(400).json({ error: 'GRR! name and age required' });
@@ -70,4 +81,5 @@ const getRecipes = (request, response) => {
 module.exports.recipeMakerPage = recipeMakerPage;
 module.exports.makeRecipe = makeRecipe;
 module.exports.getRecipes = getRecipes;
+module.exports.publiRecipesPage = publiRecipesPage;
 // module.exports.updateRecipe = updateRecipe;

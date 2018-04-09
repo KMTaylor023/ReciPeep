@@ -44,7 +44,11 @@ const RecipeSchema = new mongoose.Schema({
       message: `Steps can only be ${MAX_RECIPE_DESC_LENGTH} characters long`,
     },
   },
-
+  public: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
   owner: {
     type: mongoose.Schema.ObjectId,
     required: true,
@@ -69,7 +73,15 @@ RecipeSchema.statics.findByOwner = (ownerId, callback) => {
     owner: convertId(ownerId),
   };
 
-  return RecipeModel.find(search).select('name description ingredients steps').exec(callback);
+  return RecipeModel.find(search).select('name description ingredients steps public').exec(callback);
+};
+
+RecipeSchema.statics.findByPublic = (ownerId, callback) => {
+  const search = {
+    public: true,
+  };
+
+  return RecipeModel.find(search).select('name description ingredients steps public').exec(callback);
 };
 
 RecipeModel = mongoose.model('Recipe', RecipeSchema);
