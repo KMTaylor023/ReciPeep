@@ -1,7 +1,6 @@
 const handleRecipe = (e) => {
   e.preventDefault();
    
-  //$("#errorMessage").animate({width:'hide'}, 350);
   
   if($("#recipeNameField").val() == '' || $("#recipeDescField").val() == '') {
     handleError("RAWR! All fields are required");
@@ -11,7 +10,7 @@ const handleRecipe = (e) => {
   //TODO validate step fields
   
   sendAjax('POST', $("#recipeForm").attr('action'), $("#recipeForm").serialize(), function() {
-    loadRecipesFromServer();
+    location.reload();
   });
   return false;
 };
@@ -20,23 +19,25 @@ const setSelectedRecipe = (e) => {
   e.preventDefault();
   let div = e.target;
   
-  while (div.nodeName !== 'DIV'){
+  while (!div.classList.contains('recipe')){
     div = div.parentElement;
   }
   const recipeDiv = $(div);
   
   if(recipeDiv.hasClass('selectedRecipe')){
     recipeDiv.removeClass('selectedRecipe');
-    recipeDiv.addClass('unselectedRecipe');
+    recipeDiv.find('.recipeFullInfo').slideUp();
     return false;
   }
   
-  const recipe = $(".selectedRecipe");
-  recipe.removeClass('selectedRecipe');
-  recipe.addClass('unselectedRecipe');
+  const selected = $(".selectedRecipe");
+  if(selected) {
+    selected.removeClass('selectedRecipe');
+    selected.find('.recipeFullInfo').slideUp();;
+  }
   
-  recipeDiv.removeClass('unselectedRecipe');
   recipeDiv.addClass('selectedRecipe');
+  recipeDiv.find('.recipeFullInfo').slideDown();
   
   return false;
 };
@@ -54,30 +55,42 @@ const addFieldOnClick = (e,max) => {
 
 const RecipeForm = (props) => {
   return (
-    <form id="recipeForm"
-          onSubmit={handleRecipe}
-          name="recipeForm"
-          action="/recipeMaker"
-          method="POST"
-          className="recipeForm"
-      >
-      <label htmlFor="name">Name: </label>
-      <input id="recipeNameField" type="text" name="name" maxlength={props.maxName} placeholder="Recipe Name"/>
-      <label htmlFor="desc">Description: </label>
-      <input id="recipeDescField" type="text" name="desc" maxlength={props.maxDesc} placeholder="Recipe Description"/>
-      <fieldset id="ingredientsFieldset">
-        <legend>Ingredients</legend>
-        <input className="ingredientField" type="text" name="ingredients" maxlength={props.maxName} placeholder="ingredient"/>
-        <input type="button" id="addIngredientField" class="addFieldButton" count="1" onClick={(e) => addFieldOnClick(e,props.maxName)} value="Add Ingredient"/>
-      </fieldset>
-      <fieldset id="stepFieldset">
-        <legend>Steps</legend>
-        <input className="stepField" type="text" name="steps" maxlength={props.maxDesc} placeholder="ingredient"/>
-        <input type="button" id="addStepField" class="addFieldButton" count="1" onClick={(e) => addFieldOnClick(e,props.maxDesc)} value="Add Step"/>
-      </fieldset>
-      <input type="hidden" id="csrf" name="_csrf" value={props.csrf}/>
-      <input className="makeRecipeSubmit" type="submit" value="Make Recipe"/>
-    </form>
+    <div>
+    <h1>Make A Recipe!
+      <span>Fill in the information below and click submit</span>
+    </h1>
+      <form id="recipeForm"
+            onSubmit={handleRecipe}
+            name="recipeForm"
+            action="/recipeMaker"
+            method="POST"
+            className="recipeForm"
+        >
+        <div className="recipeFormSection"><span>○</span>Recipe Information</div>
+        <div className="innerWrap">
+          <label htmlFor="name">Name: 
+            <input id="recipeNameField" type="text" name="name" maxlength={props.maxName} placeholder="Recipe Name"/>
+          </label>
+          <label htmlFor="desc">Description: 
+            <input id="recipeDescField" type="text" name="desc" maxlength={props.maxDesc} placeholder="Recipe Description"/>      
+          </label>
+        </div>
+        <div className="recipeFormSection"><span>○</span>Ingredients</div>
+        <div className="innerWrap">
+          <input className="ingredientField" type="text" name="ingredients" maxlength={props.maxName} placeholder="ingredient"/>
+          <input type="button" id="addIngredientField" class="addFieldButton" count="1" onClick={(e) => addFieldOnClick(e,props.maxName)} value="Add Ingredient"/>
+        </div>
+        <div className="recipeFormSection"><span>○</span>Directions</div>
+        <div className="innerWrap">
+          <input className="stepField" type="text" name="steps" maxlength={props.maxDesc} placeholder="ingredient"/>
+          <input type="button" id="addStepField" class="addFieldButton" count="1" onClick={(e) => addFieldOnClick(e,props.maxDesc)} value="Add Step"/>
+        </div>
+        <input type="hidden" id="csrf" name="_csrf" value={props.csrf}/>
+        <div class="button-section">
+          <input className="makeRecipeSubmit" type="submit" value="Make Recipe"/>
+        </div>
+      </form>
+    </div>
   );
 };
 
@@ -98,22 +111,29 @@ const RecipeList = function(props) {
       );
     });
     
-    const stepNodes = recipe.steps.map(function(step) {
+    const stepNodes = recipe.steps.map(function(step, number) {
       return (
-        <li className="steps">{step}</li>
+        <li className="direction">{step}</li>
       );
     });
     
     return (
       <div key={recipe._id} className="recipe" onClick={setSelectedRecipe}>
-        <h3 className="recipeName">{recipe.name}</h3>
-        <h3 className="recipeDesc">{recipe.description}</h3>
-        <ul id="ingredients">
-            {ingredientNodes}
-        </ul>
-        <ol id="steps">
-            {stepNodes}
-        </ol>
+        <div className="recipeQuickLook">
+          <img className="recipeImg" src="/assets/img/recipe.png" alt="recipe image"></img>
+          <h1 className="recipeName">{recipe.name}</h1>
+          <h3 className="recipeDesc">{recipe.description}</h3>
+        </div>
+        <div className="recipeFullInfo">
+          <h3 className="ingredientLabel">Ingredients</h3>
+          <ul className="ingredients">
+              {ingredientNodes}
+          </ul>
+          <h3 className="directionsLabel">Directions</h3>
+          <ol className="directions">
+              {stepNodes}
+          </ol>
+        </div>
       </div>
     );
   });

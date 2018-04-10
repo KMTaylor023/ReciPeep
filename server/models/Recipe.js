@@ -73,7 +73,8 @@ RecipeSchema.statics.findByOwner = (ownerId, callback) => {
     owner: convertId(ownerId),
   };
 
-  return RecipeModel.find(search).select('name description ingredients steps public').exec(callback);
+  return RecipeModel.find(search)
+          .select('name description ingredients steps public').exec(callback);
 };
 
 RecipeSchema.statics.findByPublic = (ownerId, callback) => {
@@ -81,7 +82,8 @@ RecipeSchema.statics.findByPublic = (ownerId, callback) => {
     public: true,
   };
 
-  return RecipeModel.find(search).select('name description ingredients steps public').exec(callback);
+  return RecipeModel.find(search)
+          .select('name description ingredients steps public').exec(callback);
 };
 
 RecipeModel = mongoose.model('Recipe', RecipeSchema);

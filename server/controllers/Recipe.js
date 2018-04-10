@@ -13,8 +13,8 @@ const recipeMakerPage = (req, res) => {
   });
 };
 
-const publiRecipesPage = (req, res) => {
-   Recipe.RecipeModel.findByPublic(req.session.account._id, (err, docs) => {
+const publicRecipesPage = (req, res) => {
+  Recipe.RecipeModel.findByPublic(req.session.account._id, (err, docs) => {
     if (err) {
       console.log(err);
       return res.status(400).json({ error: 'An error occured' });
@@ -81,5 +81,5 @@ const getRecipes = (request, response) => {
 module.exports.recipeMakerPage = recipeMakerPage;
 module.exports.makeRecipe = makeRecipe;
 module.exports.getRecipes = getRecipes;
-module.exports.publiRecipesPage = publiRecipesPage;
+module.exports.publicRecipesPage = publicRecipesPage;
 // module.exports.updateRecipe = updateRecipe;

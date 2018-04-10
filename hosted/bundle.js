@@ -3,8 +3,6 @@
 var handleRecipe = function handleRecipe(e) {
   e.preventDefault();
 
-  //$("#errorMessage").animate({width:'hide'}, 350);
-
   if ($("#recipeNameField").val() == '' || $("#recipeDescField").val() == '') {
     handleError("RAWR! All fields are required");
     return false;
@@ -13,7 +11,7 @@ var handleRecipe = function handleRecipe(e) {
   //TODO validate step fields
 
   sendAjax('POST', $("#recipeForm").attr('action'), $("#recipeForm").serialize(), function () {
-    loadRecipesFromServer();
+    location.reload();
   });
   return false;
 };
@@ -22,23 +20,25 @@ var setSelectedRecipe = function setSelectedRecipe(e) {
   e.preventDefault();
   var div = e.target;
 
-  while (div.nodeName !== 'DIV') {
+  while (!div.classList.contains('recipe')) {
     div = div.parentElement;
   }
   var recipeDiv = $(div);
 
   if (recipeDiv.hasClass('selectedRecipe')) {
     recipeDiv.removeClass('selectedRecipe');
-    recipeDiv.addClass('unselectedRecipe');
+    recipeDiv.find('.recipeFullInfo').slideUp();
     return false;
   }
 
-  var recipe = $(".selectedRecipe");
-  recipe.removeClass('selectedRecipe');
-  recipe.addClass('unselectedRecipe');
+  var selected = $(".selectedRecipe");
+  if (selected) {
+    selected.removeClass('selectedRecipe');
+    selected.find('.recipeFullInfo').slideUp();;
+  }
 
-  recipeDiv.removeClass('unselectedRecipe');
   recipeDiv.addClass('selectedRecipe');
+  recipeDiv.find('.recipeFullInfo').slideDown();
 
   return false;
 };
@@ -56,54 +56,96 @@ var addFieldOnClick = function addFieldOnClick(e, max) {
 
 var RecipeForm = function RecipeForm(props) {
   return React.createElement(
-    "form",
-    { id: "recipeForm",
-      onSubmit: handleRecipe,
-      name: "recipeForm",
-      action: "/recipeMaker",
-      method: "POST",
-      className: "recipeForm"
-    },
+    "div",
+    null,
     React.createElement(
-      "label",
-      { htmlFor: "name" },
-      "Name: "
-    ),
-    React.createElement("input", { id: "recipeNameField", type: "text", name: "name", maxlength: props.maxName, placeholder: "Recipe Name" }),
-    React.createElement(
-      "label",
-      { htmlFor: "desc" },
-      "Description: "
-    ),
-    React.createElement("input", { id: "recipeDescField", type: "text", name: "desc", maxlength: props.maxDesc, placeholder: "Recipe Description" }),
-    React.createElement(
-      "fieldset",
-      { id: "ingredientsFieldset" },
+      "h1",
+      null,
+      "Make A Recipe!",
       React.createElement(
-        "legend",
+        "span",
         null,
+        "Fill in the information below and click submit"
+      )
+    ),
+    React.createElement(
+      "form",
+      { id: "recipeForm",
+        onSubmit: handleRecipe,
+        name: "recipeForm",
+        action: "/recipeMaker",
+        method: "POST",
+        className: "recipeForm"
+      },
+      React.createElement(
+        "div",
+        { className: "recipeFormSection" },
+        React.createElement(
+          "span",
+          null,
+          "\u25CB"
+        ),
+        "Recipe Information"
+      ),
+      React.createElement(
+        "div",
+        { className: "innerWrap" },
+        React.createElement(
+          "label",
+          { htmlFor: "name" },
+          "Name:",
+          React.createElement("input", { id: "recipeNameField", type: "text", name: "name", maxlength: props.maxName, placeholder: "Recipe Name" })
+        ),
+        React.createElement(
+          "label",
+          { htmlFor: "desc" },
+          "Description:",
+          React.createElement("input", { id: "recipeDescField", type: "text", name: "desc", maxlength: props.maxDesc, placeholder: "Recipe Description" })
+        )
+      ),
+      React.createElement(
+        "div",
+        { className: "recipeFormSection" },
+        React.createElement(
+          "span",
+          null,
+          "\u25CB"
+        ),
         "Ingredients"
       ),
-      React.createElement("input", { className: "ingredientField", type: "text", name: "ingredients", maxlength: props.maxName, placeholder: "ingredient" }),
-      React.createElement("input", { type: "button", id: "addIngredientField", "class": "addFieldButton", count: "1", onClick: function onClick(e) {
-          return addFieldOnClick(e, props.maxName);
-        }, value: "Add Ingredient" })
-    ),
-    React.createElement(
-      "fieldset",
-      { id: "stepFieldset" },
       React.createElement(
-        "legend",
-        null,
-        "Steps"
+        "div",
+        { className: "innerWrap" },
+        React.createElement("input", { className: "ingredientField", type: "text", name: "ingredients", maxlength: props.maxName, placeholder: "ingredient" }),
+        React.createElement("input", { type: "button", id: "addIngredientField", "class": "addFieldButton", count: "1", onClick: function onClick(e) {
+            return addFieldOnClick(e, props.maxName);
+          }, value: "Add Ingredient" })
       ),
-      React.createElement("input", { className: "stepField", type: "text", name: "steps", maxlength: props.maxDesc, placeholder: "ingredient" }),
-      React.createElement("input", { type: "button", id: "addStepField", "class": "addFieldButton", count: "1", onClick: function onClick(e) {
-          return addFieldOnClick(e, props.maxDesc);
-        }, value: "Add Step" })
-    ),
-    React.createElement("input", { type: "hidden", id: "csrf", name: "_csrf", value: props.csrf }),
-    React.createElement("input", { className: "makeRecipeSubmit", type: "submit", value: "Make Recipe" })
+      React.createElement(
+        "div",
+        { className: "recipeFormSection" },
+        React.createElement(
+          "span",
+          null,
+          "\u25CB"
+        ),
+        "Directions"
+      ),
+      React.createElement(
+        "div",
+        { className: "innerWrap" },
+        React.createElement("input", { className: "stepField", type: "text", name: "steps", maxlength: props.maxDesc, placeholder: "ingredient" }),
+        React.createElement("input", { type: "button", id: "addStepField", "class": "addFieldButton", count: "1", onClick: function onClick(e) {
+            return addFieldOnClick(e, props.maxDesc);
+          }, value: "Add Step" })
+      ),
+      React.createElement("input", { type: "hidden", id: "csrf", name: "_csrf", value: props.csrf }),
+      React.createElement(
+        "div",
+        { "class": "button-section" },
+        React.createElement("input", { className: "makeRecipeSubmit", type: "submit", value: "Make Recipe" })
+      )
+    )
   );
 };
 
@@ -129,10 +171,10 @@ var RecipeList = function RecipeList(props) {
       );
     });
 
-    var stepNodes = recipe.steps.map(function (step) {
+    var stepNodes = recipe.steps.map(function (step, number) {
       return React.createElement(
         "li",
-        { className: "steps" },
+        { className: "direction" },
         step
       );
     });
@@ -141,24 +183,43 @@ var RecipeList = function RecipeList(props) {
       "div",
       { key: recipe._id, className: "recipe", onClick: setSelectedRecipe },
       React.createElement(
-        "h3",
-        { className: "recipeName" },
-        recipe.name
+        "div",
+        { className: "recipeQuickLook" },
+        React.createElement("img", { className: "recipeImg", src: "/assets/img/recipe.png", alt: "recipe image" }),
+        React.createElement(
+          "h1",
+          { className: "recipeName" },
+          recipe.name
+        ),
+        React.createElement(
+          "h3",
+          { className: "recipeDesc" },
+          recipe.description
+        )
       ),
       React.createElement(
-        "h3",
-        { className: "recipeDesc" },
-        recipe.description
-      ),
-      React.createElement(
-        "ul",
-        { id: "ingredients" },
-        ingredientNodes
-      ),
-      React.createElement(
-        "ol",
-        { id: "steps" },
-        stepNodes
+        "div",
+        { className: "recipeFullInfo" },
+        React.createElement(
+          "h3",
+          { className: "ingredientLabel" },
+          "Ingredients"
+        ),
+        React.createElement(
+          "ul",
+          { className: "ingredients" },
+          ingredientNodes
+        ),
+        React.createElement(
+          "h3",
+          { className: "directionsLabel" },
+          "Directions"
+        ),
+        React.createElement(
+          "ol",
+          { className: "directions" },
+          stepNodes
+        )
       )
     );
   });
