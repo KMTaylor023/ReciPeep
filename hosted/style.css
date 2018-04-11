@@ -50,6 +50,7 @@ nav:nth-child(1) {
 
 nav h1 {
   font: bold 30px 'Bitter', serif;
+  width: 80%;
   margin: auto;
   text-align: center;
   vertical-align: middle;
