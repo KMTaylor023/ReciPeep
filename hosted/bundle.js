@@ -238,7 +238,9 @@ var loadRecipesFromServer = function loadRecipesFromServer() {
 };
 
 var setup = function setup(csrf) {
-  ReactDOM.render(React.createElement(RecipeForm, { csrf: csrf }), document.querySelector("#makeRecipe"));
+  if (csrf) {
+    ReactDOM.render(React.createElement(RecipeForm, { csrf: csrf }), document.querySelector("#makeRecipe"));
+  }
   ReactDOM.render(React.createElement(RecipeList, { recipes: [] }), document.querySelector("#recipes"));
 
   loadRecipesFromServer();
@@ -251,7 +253,11 @@ var getToken = function getToken() {
 };
 
 $(document).ready(function () {
-  getToken();
+  if (document.querySelector("#makeRecipe")) {
+    getToken();
+  } else {
+    setup(undefined);
+  }
 });
 'use strict';
 

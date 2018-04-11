@@ -154,9 +154,11 @@ const loadRecipesFromServer = () => {
 };
 
 const setup = function(csrf) {
-  ReactDOM.render(
-    <RecipeForm csrf={csrf} />, document.querySelector("#makeRecipe")
-  );
+  if(csrf){
+    ReactDOM.render(
+      <RecipeForm csrf={csrf} />, document.querySelector("#makeRecipe")
+    );
+  }
   ReactDOM.render(
     <RecipeList recipes={[]} />, document.querySelector("#recipes")
   );
@@ -171,5 +173,9 @@ const getToken = () => {
 };
 
 $(document).ready(function() {
-  getToken();
+  if(document.querySelector("#makeRecipe")){
+    getToken(); 
+  } else {
+    setup(undefined)
+  }
 });

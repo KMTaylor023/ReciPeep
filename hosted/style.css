@@ -18,6 +18,7 @@ nav {
     width: 100%;
     height: 50px;
     background-color: #2A88AD;
+    text-align: center;
 }
 
 nav:nth-child(1) {
@@ -45,6 +46,13 @@ nav:nth-child(1) {
 .navlink a:hover {
     transition: background-color 0.8s ease;
     background-color: #00B7FF;
+}
+
+nav h1 {
+  font: bold 30px 'Bitter', serif;
+  margin: auto;
+  text-align: center;
+  vertical-align: middle;
 }
 
 /* +++ recipe form*/
@@ -175,12 +183,15 @@ nav:nth-child(1) {
   overflow: auto;
 }
 
-.recipeQuickLook:hover {
-  
+.recipe:hover {
+  transition: background-color 0.8s ease;
+  background-color: #CCCCCC;
 }
 
 .recipe {
   width: 100%;
+  background-color: #F8F8F8;
+  margin: 3px;
 }
 
 .recipeImg {
