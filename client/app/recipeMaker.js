@@ -89,7 +89,7 @@ const RecipeForm = (props) => {
         </div>
         <div className="recipeFormSection"><span>○</span>Directions</div>
         <div className="innerWrap">
-          <input className="stepField" type="text" name="steps" maxlength={props.maxDesc} placeholder="ingredient"/>
+          <input className="stepField" type="text" name="steps" maxlength={props.maxDesc} placeholder="step"/>
           <input type="button" id="addStepField" class="addFieldButton" count="1" onClick={(e) => addFieldOnClick(e,props.maxDesc)} value="Add Step"/>
         </div>
         <input type="hidden" id="csrf" name="_csrf" value={props.csrf}/>
