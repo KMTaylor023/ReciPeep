@@ -36,12 +36,13 @@ const AccountSchema = new mongoose.Schema({
 });
 
 AccountSchema.statics.toAPI = doc => ({
-  // _id is built into your mongo document and is guaranteed to be unique
   username: doc.username,
   premium: doc.premium,
   _id: doc._id,
 });
 
+
+// validates the users password
 const validatePassword = (doc, password, callback) => {
   const pass = doc.password;
 
@@ -53,6 +54,7 @@ const validatePassword = (doc, password, callback) => {
   });
 };
 
+// find account by username
 AccountSchema.statics.findByUsername = (name, callback) => {
   const search = {
     username: name,
@@ -61,6 +63,7 @@ AccountSchema.statics.findByUsername = (name, callback) => {
   return AccountModel.findOne(search, callback);
 };
 
+// make an account hash
 AccountSchema.statics.generateHash = (password, callback) => {
   const salt = crypto.randomBytes(saltLength);
 
@@ -69,6 +72,26 @@ AccountSchema.statics.generateHash = (password, callback) => {
   );
 };
 
+// upgrade a user given username
+AccountSchema.statics.upgradeUser = (name, callback) => {
+  const search = {
+    username: name,
+  };
+
+  AccountModel.findOneAndUpdate(search, { premium: true }, (err, doc) => {
+    if (err) {
+      return callback(err);
+    }
+
+    if (!doc) {
+      return callback();
+    }
+
+    return callback(null, true);
+  });
+};
+
+// authenticate a user
 AccountSchema.statics.authenticate = (username, password, callback) =>
 AccountModel.findByUsername(username, (err, doc) => {
   if (err) {

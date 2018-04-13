@@ -1,3 +1,4 @@
+// require a user be logged in
 const requiresLogin = (req, res, next) => {
   if (!req.session.account) {
     return res.redirect('/');
@@ -5,6 +6,7 @@ const requiresLogin = (req, res, next) => {
   return next();
 };
 
+// require a user be logged out
 const requiresLogout = (req, res, next) => {
   if (req.session.account) {
     return res.redirect('/recipeMaker');
@@ -12,6 +14,7 @@ const requiresLogout = (req, res, next) => {
   return next();
 };
 
+// requires https connection
 const requireSecure = (req, res, next) => {
   if (req.headers['x-forwarded-proto'] !== 'https') {
     return res.redirect(`https://${req.hostname}${req.url}`);
@@ -19,6 +22,7 @@ const requireSecure = (req, res, next) => {
   return next();
 };
 
+// bypass security
 const bypassSecure = (req, res, next) => {
   next();
 };

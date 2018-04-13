@@ -1,5 +1,6 @@
 "use strict";
 
+//handles sending a recipe request
 var handleRecipe = function handleRecipe(e) {
   e.preventDefault();
 
@@ -16,6 +17,7 @@ var handleRecipe = function handleRecipe(e) {
   return false;
 };
 
+//selects a recipe to view in full
 var setSelectedRecipe = function setSelectedRecipe(e) {
   e.preventDefault();
   var div = e.target;
@@ -43,17 +45,19 @@ var setSelectedRecipe = function setSelectedRecipe(e) {
   return false;
 };
 
+//adds field to the recipe maker form
 var addFieldOnClick = function addFieldOnClick(e, max) {
   var count = +e.target.getAttribute('count');
   if (e.target.id === "addStepField") {
-    var newInput = $('<input class="ingredientField" type="text" name="ingredients" maxlength="' + max + '" placeholder="ingredient"></input>');
+    var newInput = $('<input class="stepField" type="text" name="steps" maxlength="' + max + '" placeholder="ingredient"></input>');
     $(e.target).before(newInput);
   } else {
-    var _newInput = $('<input class="stepField" type="text" name="steps" maxlength="' + max + '" placeholder="ingredient"/>');
+    var _newInput = $('<input class="ingredientField" type="text" name="ingredients" maxlength="' + max + '" placeholder="ingredient"/>');
     $(e.target).before(_newInput);
   }
 };
 
+//creates a recipe maker form
 var RecipeForm = function RecipeForm(props) {
   return React.createElement(
     "div",
@@ -101,6 +105,12 @@ var RecipeForm = function RecipeForm(props) {
           { htmlFor: "desc" },
           "Description:",
           React.createElement("input", { id: "recipeDescField", type: "text", name: "desc", maxlength: props.maxDesc, placeholder: "Recipe Description" })
+        ),
+        React.createElement(
+          "label",
+          { htmlFor: "public" },
+          "Public (members only):",
+          React.createElement("input", { id: "publicCheckBox", type: "checkbox", name: "public", value: "public" })
         )
       ),
       React.createElement(
@@ -149,6 +159,7 @@ var RecipeForm = function RecipeForm(props) {
   );
 };
 
+//makes the recipe list
 var RecipeList = function RecipeList(props) {
   if (props.recipes.length === 0) {
     return React.createElement(
@@ -179,6 +190,14 @@ var RecipeList = function RecipeList(props) {
       );
     });
 
+    var privateH3 = function privateH3() {
+      return React.createElement(
+        "h3",
+        { className: "private" },
+        "private"
+      );
+    };
+
     return React.createElement(
       "div",
       { key: recipe._id, className: "recipe", onClick: setSelectedRecipe },
@@ -195,7 +214,8 @@ var RecipeList = function RecipeList(props) {
           "h3",
           { className: "recipeDesc" },
           recipe.description
-        )
+        ),
+        recipe.public ? '' : privateH3()
       ),
       React.createElement(
         "div",
@@ -231,32 +251,51 @@ var RecipeList = function RecipeList(props) {
   );
 };
 
-var loadRecipesFromServer = function loadRecipesFromServer() {
-  sendAjax('GET', '/getRecipes', null, function (data) {
+//loads recipes from serrver
+var loadRecipesFromServer = function loadRecipesFromServer(csrf) {
+  var getMsg = '/getRecipes';
+  if (!csrf) getMsg = '/getPublicRecipes';
+
+  sendAjax('GET', getMsg, null, function (data) {
     ReactDOM.render(React.createElement(RecipeList, { recipes: data.recipes }), document.querySelector("#recipes"));
   });
 };
 
-var setup = function setup(csrf) {
+//sets up the page
+var setup = function setup(csrf, member) {
   if (csrf) {
     ReactDOM.render(React.createElement(RecipeForm, { csrf: csrf }), document.querySelector("#makeRecipe"));
+
+    if (!member) {
+      $("#publicCheckBox").prop('checked', true);
+      $("#publicCheckBox").prop('disabled', true);
+    }
   }
+
+  if (member) $("#upgradeButton").hide();
+
   ReactDOM.render(React.createElement(RecipeList, { recipes: [] }), document.querySelector("#recipes"));
 
-  loadRecipesFromServer();
+  loadRecipesFromServer(csrf);
 };
 
-var getToken = function getToken() {
+//gets csrf token and member status
+var getToken = function getToken(val) {
   sendAjax('GET', '/getToken', null, function (result) {
-    setup(result.csrfToken);
+    if (val) return setup(result.csrfToken, result.isMember);
+    return setup(undefined, result.isMember);
   });
 };
 
 $(document).ready(function () {
+  $('#upgradeButton').click(function () {
+    return sendAjax('GET', '/upgrade', null, redirect);
+  });
+
   if (document.querySelector("#makeRecipe")) {
-    getToken();
+    getToken(true);
   } else {
-    setup(undefined);
+    getToken(false);
   }
 });
 'use strict';

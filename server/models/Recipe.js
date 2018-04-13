@@ -68,6 +68,7 @@ RecipeSchema.statics.toAPI = (doc) => ({
   description: doc.description,
 });
 
+// find a users recipes
 RecipeSchema.statics.findByOwner = (ownerId, callback) => {
   const search = {
     owner: convertId(ownerId),
@@ -77,7 +78,8 @@ RecipeSchema.statics.findByOwner = (ownerId, callback) => {
           .select('name description ingredients steps public').exec(callback);
 };
 
-RecipeSchema.statics.findByPublic = (ownerId, callback) => {
+// finc public recipes
+RecipeSchema.statics.findByPublic = (callback) => {
   const search = {
     public: true,
   };

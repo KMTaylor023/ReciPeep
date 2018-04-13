@@ -36,6 +36,7 @@ if (process.env.REDISCLOUD_URL) {
 
 const router = require('./router.js');
 
+// setup the express app
 const app = express();
 app.disable('x-powered-by');
 app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));

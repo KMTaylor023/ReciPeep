@@ -2,15 +2,18 @@ const models = require('../models');
 
 const Account = models.Account;
 
+// render login page
 const loginPage = (req, res) => {
   res.render('login', { csrfToken: req.csrfToken() });
 };
 
+// logout of the app
 const logout = (req, res) => {
   req.session.destroy();
   res.redirect('/');
 };
 
+// attempt to login to the app
 const login = (request, response) => {
   const req = request;
   const res = response;
@@ -33,6 +36,28 @@ const login = (request, response) => {
   });
 };
 
+
+// upgrade the user to member status
+const upgrade = (request, response) => {
+  const req = request;
+  const res = response;
+
+  if (req.session.account.premium) {
+    return res.status(400).json({ error: 'Already Premium user!' });
+  }
+
+  return Account.AccountModel.upgradeUser(req.session.account.username, (err, val) => {
+    if (err || !val) {
+      return res.status(400).json({ error: 'An error occured' });
+    }
+
+    req.session.account.premium = true;
+
+    return res.json({ redirect: '/recipeMaker' });
+  });
+};
+
+// signup the user, create an account
 const signup = (request, response) => {
   const req = request;
   const res = response;
@@ -77,6 +102,7 @@ const signup = (request, response) => {
   });
 };
 
+// returns csrf token and the users member status if available
 const getToken = (request, response) => {
   const req = request;
   const res = response;
@@ -84,6 +110,8 @@ const getToken = (request, response) => {
   const csrfJSON = {
     csrfToken: req.csrfToken(),
   };
+
+  if (req.session.account) csrfJSON.isMember = req.session.account.premium;
 
   res.json(csrfJSON);
 };
@@ -93,3 +121,4 @@ module.exports.login = login;
 module.exports.logout = logout;
 module.exports.signup = signup;
 module.exports.getToken = getToken;
+module.exports.upgrade = upgrade;

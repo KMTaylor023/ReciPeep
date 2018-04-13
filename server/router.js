@@ -1,9 +1,12 @@
 const controllers = require('./controllers');
 const mid = require('./middleware');
 
+// route incoming calls
 const router = (app) => {
   app.get('/getToken', mid.requiresSecure, controllers.Account.getToken);
   app.get('/getRecipes', mid.requiresLogin, controllers.Recipe.getRecipes);
+  app.get('/getPublicRecipes', mid.requiresLogin, controllers.Recipe.getPublicRecipes);
+  app.get('/upgrade', mid.requiresLogin, controllers.Account.upgrade);
   app.get('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
   app.post('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.login);
   app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);

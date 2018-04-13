@@ -2,6 +2,7 @@ const models = require('../models');
 
 const Recipe = models.Recipe;
 
+// load the recipe maker page, with the users recipes visible
 const recipeMakerPage = (req, res) => {
   Recipe.RecipeModel.findByOwner(req.session.account._id, (err, docs) => {
     if (err) {
@@ -13,8 +14,9 @@ const recipeMakerPage = (req, res) => {
   });
 };
 
+// load the page of public recipes
 const publicRecipesPage = (req, res) => {
-  Recipe.RecipeModel.findByPublic(req.session.account._id, (err, docs) => {
+  Recipe.RecipeModel.findByPublic((err, docs) => {
     if (err) {
       console.log(err);
       return res.status(400).json({ error: 'An error occured' });
@@ -24,6 +26,7 @@ const publicRecipesPage = (req, res) => {
   });
 };
 
+// create a recipe for the user
 const makeRecipe = (req, res) => {
   if (!req.body.name || !req.body.desc || !req.body.steps || !req.body.ingredients) {
     return res.status(400).json({ error: 'GRR! name and age required' });
@@ -45,6 +48,10 @@ const makeRecipe = (req, res) => {
     owner: req.session.account._id,
   };
 
+  if (req.session.account.premium && !req.body.public) {
+    recipeData.public = false;
+  }
+
   const newRecipe = new Recipe.RecipeModel(recipeData);
 
   const recipePromise = newRecipe.save();
@@ -65,6 +72,7 @@ const makeRecipe = (req, res) => {
   return recipePromise;
 };
 
+// get recipes from the user
 const getRecipes = (request, response) => {
   const req = request;
   const res = response;
@@ -78,8 +86,26 @@ const getRecipes = (request, response) => {
   });
 };
 
+// get all public recipes
+const getPublicRecipes = (request, response) => {
+  const req = request;
+  const res = response;
+
+  //i needed to use req...
+  if (!req.session.account) return res.sataus(400).json({ error: 'Not logged in' });
+
+  return Recipe.RecipeModel.findByPublic((err, docs) => {
+    if (err) {
+      console.log(err);
+      return res.sataus(400).json({ error: 'An error occured' });
+    }
+    return res.json({ recipes: docs });
+  });
+};
+
 module.exports.recipeMakerPage = recipeMakerPage;
 module.exports.makeRecipe = makeRecipe;
 module.exports.getRecipes = getRecipes;
+module.exports.getPublicRecipes = getPublicRecipes;
 module.exports.publicRecipesPage = publicRecipesPage;
 // module.exports.updateRecipe = updateRecipe;

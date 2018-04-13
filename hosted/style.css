@@ -49,11 +49,14 @@ nav:nth-child(1) {
 }
 
 nav h1 {
-  font: bold 30px 'Bitter', serif;
-  width: 80%;
+  font: bold 42px 'Bitter', serif;
   margin: auto;
-  text-align: center;
-  vertical-align: middle;
+  padding-right: 20px;
+  float:right;
+}
+
+#upgradeButton {
+  color: #B2A909;
 }
 
 /* +++ recipe form*/
@@ -174,7 +177,7 @@ nav h1 {
 /* +++ recipe list */
 
 .recipeList {
-  width:450px;
+  width:500px;
   padding:30px;
   margin: auto;
 }
@@ -192,7 +195,8 @@ nav h1 {
 .recipe {
   width: 100%;
   background-color: #F8F8F8;
-  margin: 3px;
+  margin: 5px;
+  word-wrap: break-word;
 }
 
 .recipeImg {
@@ -205,8 +209,12 @@ nav h1 {
   font: Bold 18px 'Bitter', serif;
 }
 
-.recipeDesc {
+.recipeDesc, .private {
   font: 13px Arial, Helvetica, sans-serif;
+}
+
+.private {
+  color: darkslategray;
 }
 
 .directionsLabel,
@@ -217,7 +225,6 @@ nav h1 {
 .recipeFullInfo {
   display: none;
   margin-left: 115px;
-  width: 80%;
 }
 
 .ingredients {
