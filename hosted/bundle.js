@@ -144,7 +144,7 @@ var RecipeForm = function RecipeForm(props) {
       React.createElement(
         "div",
         { className: "innerWrap" },
-        React.createElement("input", { className: "stepField", type: "text", name: "steps", maxlength: props.maxDesc, placeholder: "ingredient" }),
+        React.createElement("input", { className: "stepField", type: "text", name: "steps", maxlength: props.maxDesc, placeholder: "step" }),
         React.createElement("input", { type: "button", id: "addStepField", "class": "addFieldButton", count: "1", onClick: function onClick(e) {
             return addFieldOnClick(e, props.maxDesc);
           }, value: "Add Step" })
