@@ -49,7 +49,7 @@ var setSelectedRecipe = function setSelectedRecipe(e) {
 var addFieldOnClick = function addFieldOnClick(e, max) {
   var count = +e.target.getAttribute('count');
   if (e.target.id === "addStepField") {
-    var newInput = $('<input class="stepField" type="text" name="steps" maxlength="' + max + '" placeholder="ingredient"></input>');
+    var newInput = $('<input class="stepField" type="text" name="steps" maxlength="' + max + '" placeholder="step"></input>');
     $(e.target).before(newInput);
   } else {
     var _newInput = $('<input class="ingredientField" type="text" name="ingredients" maxlength="' + max + '" placeholder="ingredient"/>');

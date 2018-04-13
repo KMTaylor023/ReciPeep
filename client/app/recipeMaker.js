@@ -48,7 +48,7 @@ const setSelectedRecipe = (e) => {
 const addFieldOnClick = (e,max) => {
   let count = +e.target.getAttribute('count');
   if(e.target.id === "addStepField"){
-    let newInput = $('<input class="stepField" type="text" name="steps" maxlength="' + max + '" placeholder="ingredient"></input>');
+    let newInput = $('<input class="stepField" type="text" name="steps" maxlength="' + max + '" placeholder="step"></input>');
     $(e.target).before(newInput);
   } else {
     let newInput = $('<input class="ingredientField" type="text" name="ingredients" maxlength="' + max + '" placeholder="ingredient"/>');
