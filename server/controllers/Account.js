@@ -22,7 +22,7 @@ const login = (request, response) => {
   const pass = `${req.body.pass}`;
 
   if (!username || !pass) {
-    return res.status(400).json({ error: 'GRRR! All fields are required' });
+    return res.status(400).json({ error: 'All fields are required' });
   }
 
   return Account.AccountModel.authenticate(username, pass, (err, account) => {
@@ -57,6 +57,45 @@ const upgrade = (request, response) => {
   });
 };
 
+//change the users password
+const changePassword = (request, response) => {
+  const req = request;
+  const res = response;
+  
+  req.body.oldpass = `${req.body.oldpass}`;
+  req.body.newpass = `${req.body.newpass}`;
+  req.body.newpass2 = `${req.body.newpass2}`;
+  
+  if (!req.body.oldpass || !req.body.newpass || !req.body.newpass2) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+  
+  if (req.body.newpass !== req.body.newpass2) {
+    return res.status(400).json({ error: 'passwords must match!' });
+  }
+  
+  const username = req.sessions.account.username;
+  const oldpass = req.body.oldpass;
+  const newpass = req.body.newpass;
+  
+  return Account.AccountModel.authenticate(username, oldpass, (err, account) => {
+    if (err || !account) {
+      return res.status(401).json({ error: 'Wrong password' });
+    }
+
+    return Account.AccountModel.generateHash(newpass, (salt, hash) => {
+      
+      Account.AccountModel.changePassword(username, hash, salt, (err, valid) => {
+        if (err || !valid) {
+          return res.status(400).json({ error: 'An error occured' });
+        }
+        //TODO return something else to clear the page
+        return res.json({ redirect: '/recipeMaker' });
+      })
+    });
+  });
+};
+
 // signup the user, create an account
 const signup = (request, response) => {
   const req = request;
@@ -67,11 +106,11 @@ const signup = (request, response) => {
   req.body.pass2 = `${req.body.pass2}`;
 
   if (!req.body.username || !req.body.pass || !req.body.pass2) {
-    return res.status(400).json({ error: 'GRRR! All fields are required' });
+    return res.status(400).json({ error: 'All fields are required' });
   }
 
   if (req.body.pass !== req.body.pass2) {
-    return res.status(400).json({ error: 'GRRR! passwords gott match yo!' });
+    return res.status(400).json({ error: 'passwords must match!' });
   }
 
   return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {

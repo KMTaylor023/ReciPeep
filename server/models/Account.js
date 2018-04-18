@@ -91,6 +91,13 @@ AccountSchema.statics.upgradeUser = (name, callback) => {
   });
 };
 
+AccountSchema.statics.changePassword = (username, newhash,newsalt, callback) => 
+AccountModel.findOneAndUpdate({username}, {password: newhash, salt: newsalt}, (err, doc) => {
+  if (err) return callback(err);
+  if(!doc) return callback();
+  return callback(null, true);
+});
+
 // authenticate a user
 AccountSchema.statics.authenticate = (username, password, callback) =>
 AccountModel.findByUsername(username, (err, doc) => {
