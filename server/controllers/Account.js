@@ -7,6 +7,11 @@ const loginPage = (req, res) => {
   res.render('login', { csrfToken: req.csrfToken() });
 };
 
+// render 404 page
+const notFound = (req,res) => {
+  res.render('notFound', {url: req.url})
+};
+
 // logout of the app
 const logout = (req, res) => {
   req.session.destroy();
@@ -160,4 +165,5 @@ module.exports.login = login;
 module.exports.logout = logout;
 module.exports.signup = signup;
 module.exports.getToken = getToken;
+module.exports.notFound = notFound;
 module.exports.upgrade = upgrade;
