@@ -6,6 +6,10 @@ const Account = models.Account;
 const loginPage = (req, res) => {
   res.render('login', { csrfToken: req.csrfToken() });
 };
+// render password reset page page
+const changePasswordPage = (req, res) => {
+  res.render('reset', { csrfToken: req.csrfToken() });
+};
 
 // render 404 page
 const notFound = (req,res) => {
@@ -79,7 +83,7 @@ const changePassword = (request, response) => {
     return res.status(400).json({ error: 'passwords must match!' });
   }
   
-  const username = req.sessions.account.username;
+  const username = req.session.account.username;
   const oldpass = req.body.oldpass;
   const newpass = req.body.newpass;
   
@@ -160,6 +164,8 @@ const getToken = (request, response) => {
   res.json(csrfJSON);
 };
 
+module.exports.changePassword = changePassword;
+module.exports.changePasswordPage = changePasswordPage;
 module.exports.loginPage = loginPage;
 module.exports.login = login;
 module.exports.logout = logout;

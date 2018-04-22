@@ -7,9 +7,11 @@ const router = (app) => {
   app.get('/getRecipes', mid.requiresLogin, controllers.Recipe.getRecipes);
   app.get('/getPublicRecipes', mid.requiresLogin, controllers.Recipe.getPublicRecipes);
   app.get('/upgrade', mid.requiresLogin, controllers.Account.upgrade);
+  app.get('/passwordChange', mid.requiresLogin, controllers.Account.changePasswordPage);
   app.get('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
   app.post('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.login);
   app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);
+  app.post('/reset', mid.requiresSecure, mid.requiresLogin, controllers.Account.changePassword);
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
   app.get('/recipeMaker', mid.requiresLogin, controllers.Recipe.recipeMakerPage);
   app.post('/recipeMaker', mid.requiresLogin, controllers.Recipe.makeRecipe);

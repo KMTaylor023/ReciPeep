@@ -2,11 +2,6 @@
 <head>
   <meta charset="utf-8"/>
   <title>ReciPeep</title>
-  <!-- pan icon source: 
-        https://www.freefavicon.com/freefavicons/objects/iconinfo/pan----152-245244.html
-       Scroll image source
-        http://game-icons.net/lorc/originals/scroll-unfurled.html
-  -->
   <script crossorigin src="https://unpkg.com/react@15/dist/react.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
   <script crossorigin src="https://unpkg.com/prop-types/prop-types.min.js"></script>
@@ -16,18 +11,15 @@
   <link rel="shortcut icon" href="/assets/img/favicon.png"/>
   <link rel="stylesheet" type="text/css" href="/assets/style.css"/>
 </head>
-<body>
+<body> 
   <nav><a href="/login"><img id="logo" src="/assets/img/pan.png" alt="pan logo"/></a>
     <div class="navlink"><a href="/logout">Log out</a></div>
-    <div class="navlink"><a href="/passwordChange">Change Password</a></div>
+    <div class="navlink"><a href="/recipeMaker">My Recipes</a></div> 
     <div class="navlink"><a href="/public">Public Recipes</a></div>
     <div id="upgradeButton" class="navlink"><a href="#">Become A Member</a></div>
     <h1>ReciPeep</h1>
   </nav>
-  <section id="makeRecipe">
-  </section>
-  <section id="recipes">
-  </section>
-  <script src="/assets/bundle.js"></script>
+  <section id="content"></section>
+  <script src="/assets/loginBundle.js"></script>
 </body>
 </html>

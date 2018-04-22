@@ -292,6 +292,14 @@ $(document).ready(function () {
     return sendAjax('GET', '/upgrade', null, redirect);
   });
 
+  //blocks emter key use on page
+  $(window).keydown(function (event) {
+    if (event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+
   if (document.querySelector("#makeRecipe")) {
     getToken(true);
   } else {

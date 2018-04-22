@@ -17,16 +17,32 @@ const handleSignup = (e) => {
   e.preventDefault();
   
   if($("#user").val() == '' || $("#pass").val() == '' || $('#pass2').val() == '') {
-    handleError('RAWR! All Fields Required');
+    handleError('All Fields Required');
     return false;
   }
   
   if($("#pass").val() !== $('#pass2').val()) {
-    handleError('RAWR! All Fields Required');
+    handleError('Passwords must match!');
     return false;
   }
   
   sendAjax('POST', $('#signupForm').attr('action'), $('#signupForm').serialize(), redirect);
+};
+
+const handleReset = (e) => {
+  e.preventDefault();
+  
+  if($("#oldpass").val() == '' || $("#newpass").val() == '' || $('#newpass2').val() == '') {
+    handleError('All Fields Required');
+    return false;
+  }
+  
+  if($("#newpass").val() !== $('#newpass2').val()) {
+    handleError('Passwords must match!');
+    return false;
+  }
+  
+  sendAjax('POST', $('#resetForm').attr('action'), $('#resetForm').serialize(), redirect);
 };
 
 const LoginWindow = (props) => {
@@ -72,6 +88,35 @@ const SignupWindow = (props) => {
   );
 };
 
+const ResetWindow = (props) => {
+  return (
+    <form id="resetForm"
+          name="resetForm"
+          onSubmit = {handleReset}
+          action="/reset"
+          method="POST"
+          className="mainForm"
+      >
+      <label htmlFor="oldpass">Old Password: </label>
+      <input id="oldpass" type="password" name="oldpass" placeholder="password"/>
+      <label htmlFor="newpass">New Password: </label>
+      <input id="newpass" type="password" name="newpass" placeholder="password"/>
+      <label htmlFor="newpass2">New Password: </label>
+      <input id="newpass2" type="password" name="newpass2" placeholder="retype password"/>
+      <input type="hidden" name="_csrf" value={props.csrf}/>
+      <input className="formSubmit" type="submit" value="Reset Password"/>
+    
+    </form>
+  );
+};
+
+const createResetWindow = (csrf) => {
+  ReactDOM.render(
+    <ResetWindow csrf={csrf} />,
+    document.querySelector("#content")
+  );
+};
+
 const createLoginWindow = (csrf) => {
   ReactDOM.render(
     <LoginWindow csrf={csrf} />,
@@ -89,6 +134,11 @@ const createSignupWindow = (csrf) => {
 const setup = (csrf) => {
   const loginButton = document.querySelector("#loginButton");
   const signupButton = document.querySelector("#signupButton");
+  
+  if(!loginButton || !signupButton){
+    createResetWindow(csrf);
+    return;
+  }
   
   signupButton.addEventListener('click', (e) => {
     e.preventDefault();

@@ -1,5 +1,5 @@
 {
-  "name": "Logins",
+  "name": "Recipeep",
   "version": "1.0.0",
   "engines": {
     "node": "7.5.0",
@@ -22,9 +22,10 @@
     "Node",
     "MVC",
     "Redis",
-    "Login"
+    "Login",
+    "Cool"
   ],
-  "author": "Cody Van De Mark",
+  "author": "Keegan Taylor",
   "license": "Apache 2.0",
   "dependencies": {
     "body-parser": "^1.15.0",
