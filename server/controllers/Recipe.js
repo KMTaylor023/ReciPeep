@@ -91,7 +91,7 @@ const getPublicRecipes = (request, response) => {
   const req = request;
   const res = response;
 
-  //i needed to use req...
+  // i needed to use req...
   if (!req.session.account) return res.sataus(400).json({ error: 'Not logged in' });
 
   return Recipe.RecipeModel.findByPublic((err, docs) => {

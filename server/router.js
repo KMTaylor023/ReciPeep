@@ -17,7 +17,7 @@ const router = (app) => {
   app.post('/recipeMaker', mid.requiresLogin, controllers.Recipe.makeRecipe);
   app.get('/public', mid.requiresLogin, controllers.Recipe.publicRecipesPage);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
-  app.get('/*',mid.requiresSecure, controllers.Account.notFound);
+  app.get('/*', mid.requiresSecure, controllers.Account.notFound);
 };
 
 module.exports = router;

@@ -12,8 +12,8 @@ const changePasswordPage = (req, res) => {
 };
 
 // render 404 page
-const notFound = (req,res) => {
-  res.render('notFound', {url: req.url})
+const notFound = (req, res) => {
+  res.render('notFound', { url: req.url });
 };
 
 // logout of the app
@@ -66,41 +66,40 @@ const upgrade = (request, response) => {
   });
 };
 
-//change the users password
+// change the users password
 const changePassword = (request, response) => {
   const req = request;
   const res = response;
-  
+
   req.body.oldpass = `${req.body.oldpass}`;
   req.body.newpass = `${req.body.newpass}`;
   req.body.newpass2 = `${req.body.newpass2}`;
-  
+
   if (!req.body.oldpass || !req.body.newpass || !req.body.newpass2) {
     return res.status(400).json({ error: 'All fields are required' });
   }
-  
+
   if (req.body.newpass !== req.body.newpass2) {
     return res.status(400).json({ error: 'passwords must match!' });
   }
-  
+
   const username = req.session.account.username;
   const oldpass = req.body.oldpass;
   const newpass = req.body.newpass;
-  
+
   return Account.AccountModel.authenticate(username, oldpass, (err, account) => {
     if (err || !account) {
       return res.status(401).json({ error: 'Wrong password' });
     }
 
     return Account.AccountModel.generateHash(newpass, (salt, hash) => {
-      
-      Account.AccountModel.changePassword(username, hash, salt, (err, valid) => {
-        if (err || !valid) {
+      Account.AccountModel.changePassword(username, hash, salt, (err2, valid) => {
+        if (err2 || !valid) {
           return res.status(400).json({ error: 'An error occured' });
         }
-        //TODO return something else to clear the page
+        // TODO return something else to clear the page
         return res.json({ redirect: '/recipeMaker' });
-      })
+      });
     });
   });
 };
