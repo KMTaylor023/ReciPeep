@@ -120,23 +120,23 @@ var ResetWindow = function ResetWindow(props) {
     React.createElement(
       "label",
       { htmlFor: "oldpass" },
-      "Old Password: "
+      "Current: "
     ),
     React.createElement("input", { id: "oldpass", type: "password", name: "oldpass", placeholder: "password" }),
     React.createElement(
       "label",
       { htmlFor: "newpass" },
-      "New Password: "
+      "New: "
     ),
-    React.createElement("input", { id: "newpass", type: "password", name: "newpass", placeholder: "password" }),
+    React.createElement("input", { id: "pass", type: "password", name: "newpass", placeholder: "password" }),
     React.createElement(
       "label",
       { htmlFor: "newpass2" },
-      "New Password: "
+      "New: "
     ),
-    React.createElement("input", { id: "newpass2", type: "password", name: "newpass2", placeholder: "retype password" }),
+    React.createElement("input", { id: "pass2", type: "password", name: "newpass2", placeholder: "retype password" }),
     React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-    React.createElement("input", { className: "formSubmit", type: "submit", value: "Reset Password" })
+    React.createElement("input", { className: "formSubmit", type: "submit", value: "Reset" })
   );
 };
 

@@ -44,20 +44,65 @@ const setSelectedRecipe = (e) => {
   return false;
 };
 
+
+
+const moveUpInput = (input) => {
+  let children = Array.from(input.parentElement.childNodes);
+  
+  let index = children.indexOf(input);
+  
+  if(index === 0) return;
+  
+  input.parentElement.insertBefore(input,children[index - 1]);
+};
+
+const moveDownInput = (input) => {
+  let children = Array.from(input.parentElement.childNodes);
+  
+  let index = children.indexOf(input);
+  
+  if(index === children.length - 2) return;
+  
+  input.parentElement.insertBefore(input,children[index + 2]);
+};
+
+const removeInput = (input) => {
+  let children = input.parentElement.childNodes;
+  
+  if(children.length <= 2) return;
+  
+  $(input).remove();
+};
+
 //adds field to the recipe maker form
 const addFieldOnClick = (e,max) => {
-  let count = +e.target.getAttribute('count');
+  let text = '<div class="recipeInput"><input class=';
   if(e.target.id === "addStepField"){
-    let newInput = $('<input class="stepField" type="text" name="steps" maxlength="' + max + '" placeholder="step"></input>');
-    $(e.target).before(newInput);
+    text += '"stepField" type="text" name="steps" maxlength="' + max + '" placeholder="step"/>';
   } else {
-    let newInput = $('<input class="ingredientField" type="text" name="ingredients" maxlength="' + max + '" placeholder="ingredient"/>');
-    $(e.target).before(newInput);
+    text += '"ingredientField" type="text" name="ingredients" maxlength="' + max + '" placeholder="ingredient"/>';
   }
+  text += '<input type="button" class="moveUpInput" onclick="moveUpInput(this.parentElement)" value="↑"/>';
+  text += '<input type="button" class="moveDownInput" onclick="moveDownInput(this.parentElement)" value="↓"/>';
+  text += '<input type="button" class="removeInput" onclick="removeInput(this.parentElement)" value="❌"/>';
+  const newInput = $(text);
+  $(e.target).before(newInput);
 };
 
 //creates a recipe maker form
 const RecipeForm = (props) => {
+  function doUp(e) {
+    moveUpInput(e.target.parentElement);
+  };
+  
+  function doDown(e) {
+    moveDownInput(e.target.parentElement);
+  };
+  
+  function doRemove(e) {
+    removeInput(e.target.parentElement);
+  };
+  
   return (
     <div>
     <h1>Make A Recipe!
@@ -84,13 +129,23 @@ const RecipeForm = (props) => {
         </div>
         <div className="recipeFormSection"><span>○</span>Ingredients</div>
         <div className="innerWrap">
-          <input className="ingredientField" type="text" name="ingredients" maxlength={props.maxName} placeholder="ingredient"/>
-          <input type="button" id="addIngredientField" class="addFieldButton" count="1" onClick={(e) => addFieldOnClick(e,props.maxName)} value="Add Ingredient"/>
+          <div className="recipeInput">
+            <input className="ingredientField" type="text" name="ingredients" maxlength={props.maxName} placeholder="ingredient"/>
+            <input type="button" class="moveUpInput" onClick={doUp} value="↑"/>
+            <input type="button" class="moveDownInput" onClick={doDown} value="↓"/>
+            <input type="button" class="removeInput" onClick={doRemove} value="❌"/>
+          </div>
+          <input type="button" id="addIngredientField" class="addFieldButton" onClick={(e) => addFieldOnClick(e,props.maxName)} value="Add Ingredient"/>
         </div>
         <div className="recipeFormSection"><span>○</span>Directions</div>
         <div className="innerWrap">
-          <input className="stepField" type="text" name="steps" maxlength={props.maxDesc} placeholder="step"/>
-          <input type="button" id="addStepField" class="addFieldButton" count="1" onClick={(e) => addFieldOnClick(e,props.maxDesc)} value="Add Step"/>
+          <div className="recipeInput">
+            <input className="stepField" type="text" name="steps" maxlength={props.maxDesc} placeholder="step"/>
+            <input type="button" class="moveUpInput" onClick={doUp} value="↑"/>
+            <input type="button" class="moveDownInput" onClick={doDown} value="↓"/>
+            <input type="button" class="removeInput" onClick={doRemove} value="❌"/>
+          </div>
+          <input type="button" id="addStepField" class="addFieldButton" onClick={(e) => addFieldOnClick(e,props.maxDesc)} value="Add Step"/>
         </div>
         <input type="hidden" id="csrf" name="_csrf" value={props.csrf}/>
         <div class="button-section">

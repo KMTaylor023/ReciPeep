@@ -97,14 +97,14 @@ const ResetWindow = (props) => {
           method="POST"
           className="mainForm"
       >
-      <label htmlFor="oldpass">Old Password: </label>
+      <label htmlFor="oldpass">Current: </label>
       <input id="oldpass" type="password" name="oldpass" placeholder="password"/>
-      <label htmlFor="newpass">New Password: </label>
-      <input id="newpass" type="password" name="newpass" placeholder="password"/>
-      <label htmlFor="newpass2">New Password: </label>
-      <input id="newpass2" type="password" name="newpass2" placeholder="retype password"/>
+      <label htmlFor="newpass">New: </label>
+      <input id="pass" type="password" name="newpass" placeholder="password"/>
+      <label htmlFor="newpass2">New: </label>
+      <input id="pass2" type="password" name="newpass2" placeholder="retype password"/>
       <input type="hidden" name="_csrf" value={props.csrf}/>
-      <input className="formSubmit" type="submit" value="Reset Password"/>
+      <input className="formSubmit" type="submit" value="Reset"/>
     
     </form>
   );
