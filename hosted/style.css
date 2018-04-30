@@ -106,13 +106,17 @@ nav h1 {
     color: #888;
     margin-bottom: 15px;
 }
+
+#recipeNameField,
+#recipeDescField {
+    width: 100%;
+}
 #makeRecipe input[type="text"],
 #makeRecipe textarea {
     display: block;
     box-sizing: border-box;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
-    width: 100%;
     padding: 8px;
     border-radius: 6px;
     -webkit-border-radius:6px;
@@ -143,22 +147,30 @@ nav h1 {
     margin-top: -3px;
 }
 
+#addStepField,
+#addIngredientField,
+.makeRecipeSubmit {
+  padding: 8px 20px 8px 20px;
+  font: normal 30px 'Bitter', serif;
+  font-size: 15px;
+}
+
+
 #makeRecipe input[type="button"], 
 #makeRecipe input[type="submit"]{
     background: #2A88AD;
     transition: background-color 0.4s ease;
-    padding: 8px 20px 8px 20px;
+    
     border-radius: 5px;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     color: #fff;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.12);
-    font: normal 30px 'Bitter', serif;
+    
     -moz-box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.17);
     -webkit-box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.17);
     box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.17);
     border: 1px solid #257C9E;
-    font-size: 15px;
 }
 
 #makeRecipe input[type="button"]:hover, 
@@ -206,7 +218,10 @@ nav h1 {
 }
 
 .recipeName {
-  font: Bold 18px 'Bitter', serif;
+  font: Bold 25px 'Bitter', serif;
+  vertical-align: bottom;align-content: 
+  height: 50px;
+  margin: 0;
 }
 
 .recipeDesc, .private {
@@ -214,7 +229,8 @@ nav h1 {
 }
 
 .private {
-  color: darkslategray;
+  color: darkred;
+  font-style: italic;
 }
 
 .directionsLabel,
@@ -222,25 +238,49 @@ nav h1 {
   font: Bold 18px 'Bitter', serif;
 }
 
+.ingredientField,
+.stepField {
+  float: left;
+  display: block;
+  width: 80%;
+}
+
+.moveButtons {
+  float: left;
+  position: relative;
+}
+
+.removeInput {
+  float: right;
+  height: 35px;
+  font: normal 15px 'Bitter', serif;
+  padding: 0 10px;
+}
+
+.moveUpInput {
+  height: 16px;
+  font-size: 10px;
+  padding: 0 10px;
+  position: absolute;
+}
+
+.moveDownInput {
+  height: 16px;
+  padding: 0 10px;
+  position: relative;
+  font-size: 10px;
+  top: 15px;
+}
+
 .recipeFullInfo {
   display: none;
   margin-left: 115px;
 }
 
-.ingredients {
-  
-}
-
-.directions {
-  
-}
-
-.ingredient {
-  
-}
-
-.direction {
-  
+.makeRecipeSubmit {
+  margin: auto;
+  display: block;
+  width: 80%;
 }
 
 /* --- recipe list */

@@ -75,14 +75,18 @@ var removeInput = function removeInput(input) {
 
 //adds field to the recipe maker form
 var addFieldOnClick = function addFieldOnClick(e, max) {
-  var text = '<div class="recipeInput"><input class=';
+  var text = '<div class="recipeInput">';
+  text += '<div class="moveButtons">';
+  text += '<input type="button" class="moveUpInput" onclick="moveUpInput(this.parentElement.parentElement)" value="↑"/>';
+  text += '<input type="button" class="moveDownInput" onclick="moveDownInput(this.parentElement.parentElement)" value="↓"/>';
+  text += "</div>";
+
   if (e.target.id === "addStepField") {
-    text += '"stepField" type="text" name="steps" maxlength="' + max + '" placeholder="step"/>';
+    text += '<input class="stepField" type="text" name="steps" maxlength="' + max + '" placeholder="step"/>';
   } else {
-    text += '"ingredientField" type="text" name="ingredients" maxlength="' + max + '" placeholder="ingredient"/>';
+    text += '<input class="ingredientField" type="text" name="ingredients" maxlength="' + max + '" placeholder="ingredient"/>';
   }
-  text += '<input type="button" class="moveUpInput" onclick="moveUpInput(this.parentElement)" value="↑"/>';
-  text += '<input type="button" class="moveDownInput" onclick="moveDownInput(this.parentElement)" value="↓"/>';
+
   text += '<input type="button" class="removeInput" onclick="removeInput(this.parentElement)" value="❌"/>';
   var newInput = $(text);
   $(e.target).before(newInput);
@@ -91,11 +95,11 @@ var addFieldOnClick = function addFieldOnClick(e, max) {
 //creates a recipe maker form
 var RecipeForm = function RecipeForm(props) {
   function doUp(e) {
-    moveUpInput(e.target.parentElement);
+    moveUpInput(e.target.parentElement.parentElement);
   };
 
   function doDown(e) {
-    moveDownInput(e.target.parentElement);
+    moveDownInput(e.target.parentElement.parentElement);
   };
 
   function doRemove(e) {
@@ -112,7 +116,7 @@ var RecipeForm = function RecipeForm(props) {
       React.createElement(
         "span",
         null,
-        "Fill in the information below and click submit"
+        "Fill in the information below and click 'Make Recipe'"
       )
     ),
     React.createElement(
@@ -172,10 +176,14 @@ var RecipeForm = function RecipeForm(props) {
         React.createElement(
           "div",
           { className: "recipeInput" },
+          React.createElement(
+            "div",
+            { className: "moveButtons" },
+            React.createElement("input", { type: "button", className: "moveUpInput", onClick: doUp, value: "\u2191" }),
+            React.createElement("input", { type: "button", className: "moveDownInput", onClick: doDown, value: "\u2193" })
+          ),
           React.createElement("input", { className: "ingredientField", type: "text", name: "ingredients", maxlength: props.maxName, placeholder: "ingredient" }),
-          React.createElement("input", { type: "button", "class": "moveUpInput", onClick: doUp, value: "\u2191" }),
-          React.createElement("input", { type: "button", "class": "moveDownInput", onClick: doDown, value: "\u2193" }),
-          React.createElement("input", { type: "button", "class": "removeInput", onClick: doRemove, value: "\u274C" })
+          React.createElement("input", { type: "button", className: "removeInput", onClick: doRemove, value: "\u274C" })
         ),
         React.createElement("input", { type: "button", id: "addIngredientField", "class": "addFieldButton", onClick: function onClick(e) {
             return addFieldOnClick(e, props.maxName);
@@ -197,10 +205,14 @@ var RecipeForm = function RecipeForm(props) {
         React.createElement(
           "div",
           { className: "recipeInput" },
+          React.createElement(
+            "div",
+            { className: "moveButtons" },
+            React.createElement("input", { type: "button", className: "moveUpInput", onClick: doUp, value: "\u2191" }),
+            React.createElement("input", { type: "button", className: "moveDownInput", onClick: doDown, value: "\u2193" })
+          ),
           React.createElement("input", { className: "stepField", type: "text", name: "steps", maxlength: props.maxDesc, placeholder: "step" }),
-          React.createElement("input", { type: "button", "class": "moveUpInput", onClick: doUp, value: "\u2191" }),
-          React.createElement("input", { type: "button", "class": "moveDownInput", onClick: doDown, value: "\u2193" }),
-          React.createElement("input", { type: "button", "class": "removeInput", onClick: doRemove, value: "\u274C" })
+          React.createElement("input", { type: "button", className: "removeInput", onClick: doRemove, value: "\u274C" })
         ),
         React.createElement("input", { type: "button", id: "addStepField", "class": "addFieldButton", onClick: function onClick(e) {
             return addFieldOnClick(e, props.maxDesc);
@@ -251,7 +263,7 @@ var RecipeList = function RecipeList(props) {
       return React.createElement(
         "h3",
         { className: "private" },
-        "private"
+        "Private"
       );
     };
 
@@ -267,11 +279,6 @@ var RecipeList = function RecipeList(props) {
           { className: "recipeName" },
           recipe.name
         ),
-        React.createElement(
-          "h3",
-          { className: "recipeDesc" },
-          recipe.description
-        ),
         recipe.public ? '' : privateH3()
       ),
       React.createElement(
@@ -279,7 +286,12 @@ var RecipeList = function RecipeList(props) {
         { className: "recipeFullInfo" },
         React.createElement(
           "h3",
-          { className: "ingredientLabel" },
+          { className: "recipeDesc" },
+          recipe.description
+        ),
+        React.createElement(
+          "h3",
+          { className: "ingredientsLabel" },
           "Ingredients"
         ),
         React.createElement(
