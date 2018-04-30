@@ -4,7 +4,7 @@ const handleRecipe = (e) => {
    
   
   if($("#recipeNameField").val() == '' || $("#recipeDescField").val() == '') {
-    handleError("RAWR! All fields are required");
+    handleError("All fields are required");
     return false;
   }
   
@@ -108,9 +108,16 @@ const RecipeForm = (props) => {
     removeInput(e.target.parentElement);
   };
   
+  function toggleForm() {
+    if($("#recipeForm").css('display') === 'none')
+      $("#recipeForm").slideDown();
+    else
+      $("#recipeForm").slideUp();
+  }
+  
   return (
     <div>
-    <h1>Make A Recipe!
+    <h1 onClick={toggleForm}>Click To Make A Recipe!
       <span>Fill in the information below and click 'Make Recipe'</span>
     </h1>
       <form id="recipeForm"
@@ -120,7 +127,7 @@ const RecipeForm = (props) => {
             method="POST"
             className="recipeForm"
         >
-        <div className="recipeFormSection"><span>○</span>Recipe Information</div>
+        <div className="recipeFormSection"><span>1</span>Recipe Information</div>
         <div className="innerWrap">
           <label htmlFor="name">Name: 
             <input id="recipeNameField" type="text" name="name" maxlength={props.maxName} placeholder="Recipe Name"/>
@@ -132,7 +139,7 @@ const RecipeForm = (props) => {
             <input id="publicCheckBox" type="checkbox" name="public" value="public"/>  
           </label>
         </div>
-        <div className="recipeFormSection"><span>○</span>Ingredients</div>
+        <div className="recipeFormSection"><span>2</span>Ingredients</div>
         <div className="innerWrap">
           <div className="recipeInput">
             <div className="moveButtons">
@@ -145,7 +152,7 @@ const RecipeForm = (props) => {
           </div>
           <input type="button" id="addIngredientField" class="addFieldButton" onClick={(e) => addFieldOnClick(e,props.maxName)} value="Add Ingredient"/>
         </div>
-        <div className="recipeFormSection"><span>○</span>Directions</div>
+        <div className="recipeFormSection"><span>3</span>Directions</div>
         <div className="innerWrap">
           <div className="recipeInput">
             <div className="moveButtons">

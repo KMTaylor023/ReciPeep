@@ -5,7 +5,7 @@ var handleRecipe = function handleRecipe(e) {
   e.preventDefault();
 
   if ($("#recipeNameField").val() == '' || $("#recipeDescField").val() == '') {
-    handleError("RAWR! All fields are required");
+    handleError("All fields are required");
     return false;
   }
 
@@ -106,13 +106,17 @@ var RecipeForm = function RecipeForm(props) {
     removeInput(e.target.parentElement);
   };
 
+  function toggleForm() {
+    if ($("#recipeForm").css('display') === 'none') $("#recipeForm").slideDown();else $("#recipeForm").slideUp();
+  }
+
   return React.createElement(
     "div",
     null,
     React.createElement(
       "h1",
-      null,
-      "Make A Recipe!",
+      { onClick: toggleForm },
+      "Click To Make A Recipe!",
       React.createElement(
         "span",
         null,
@@ -134,7 +138,7 @@ var RecipeForm = function RecipeForm(props) {
         React.createElement(
           "span",
           null,
-          "\u25CB"
+          "1"
         ),
         "Recipe Information"
       ),
@@ -166,7 +170,7 @@ var RecipeForm = function RecipeForm(props) {
         React.createElement(
           "span",
           null,
-          "\u25CB"
+          "2"
         ),
         "Ingredients"
       ),
@@ -195,7 +199,7 @@ var RecipeForm = function RecipeForm(props) {
         React.createElement(
           "span",
           null,
-          "\u25CB"
+          "3"
         ),
         "Directions"
       ),
